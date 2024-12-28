@@ -7,7 +7,7 @@ const { createConnection } = require('mysql2/promise');
 let app = express();
 app.set('view engine', 'hbs');
 app.use(express.static('public'));
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 
 wax.on(hbs.handlebars);
 wax.setLayoutPath('./views/layouts');
@@ -22,25 +22,35 @@ async function main() {
         'password': process.env.DB_PASSWORD
     })
 
-    app.get('/', (req,res) => {
+    app.get('/', (req, res) => {
         res.send('Hello, World!');
     });
 
     app.get('/customers', async (req, res) => {
         const [customers] = await connection.execute({
-            'sql':`
+            'sql': `
             SELECT * from Customers
                 JOIN Companies ON Customers.company_id = Companies.company_id;
             `,
             nestTables: true
 
-        });
-        res.render('customers/index', {
-            'customers': customers
-    })
-    
+            res.render('customers/index', {
+                'customers': customers
+            })
 
-    app.listen(3000, ()=>{
+        });
+
+    })
+
+    app.get('/customers/create', async (req, res) => {
+        let [companies] = await connection.execute('SELECT * from Companies');
+        res.render('customers/add', {
+            'companies': companies
+        })
+    })
+
+
+    app.listen(3000, () => {
         console.log('Server is running')
     });
 }
