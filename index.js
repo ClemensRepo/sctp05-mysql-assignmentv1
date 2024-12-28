@@ -26,6 +26,20 @@ async function main() {
         res.send('Hello, World!');
     });
 
+    app.get('/customers', async (req, res) => {
+        const [customers] = await connection.execute({
+            'sql':`
+            SELECT * from Customers
+                JOIN Companies ON Customers.company_id = Companies.company_id;
+            `,
+            nestTables: true
+
+        });
+        res.render('customers/index', {
+            'customers': customers
+    })
+    
+
     app.listen(3000, ()=>{
         console.log('Server is running')
     });
