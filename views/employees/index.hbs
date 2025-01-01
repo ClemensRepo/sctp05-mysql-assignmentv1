@@ -7,15 +7,18 @@
         <th>Last Name</th>
         <th>Rating</th>
         <th>Company</th>
+        <th>Action</th>
     </tr>
     {{#each customers}}
     <tr>
-        <td>{{Customers.first_name}}</td>
-        <td>{{Customers.last_name}}</td>
-        <td>{{Companies.name}}</td>
-
+        <td>{{first_name}}</td>
+        <td>{{last_name}}</td>
+        <td>{{rating}}</td>
+        <td>{{name}}</td>
+        <td><a href="/customers/{{customer_id}}/edit">Edit</a></td>
     </tr>
     {{/each}}
 </table>
+
 {{/block}}
 {{/extends}}
