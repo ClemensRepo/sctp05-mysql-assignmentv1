@@ -3,6 +3,7 @@ const hbs = require('hbs');
 const wax = require('wax-on');
 require('dotenv').config();
 const { createConnection } = require('mysql2/promise');
+const req = require('express/lib/request');
 
 let app = express();
 app.set('view engine', 'hbs');
@@ -28,10 +29,10 @@ async function main() {
 
     app.get('/customers', async (req, res) => {
         const [customers] = await connection.execute({
-            'sql': `
+            'sql': '
             SELECT * from Customers
                 JOIN Companies ON Customers.company_id = Companies.company_id;
-            `,
+            ',
             nestTables: true
 
             res.render('customers/index', {
@@ -121,6 +122,29 @@ async function main() {
         await connection.execute(`DELETE FROM Customers WHERE customer_id = ?`, [req.params.customer_id]);
         res.redirect('/customers');
     })
+
+    app.get('/customers', async function(req,res) {
+        let query = 'SELECT * FROM Customers JOIN 
+        Companies ON Companies.company_id = Customers.company_id WHERE 1';
+
+        const {first_name, last_name} = req.query;
+
+        const bindings = [];
+
+        if(first_name) {
+            query+ = 'AND first_name LIKE ?';
+            bindings.push('%' + first_name '%');
+        }
+
+        if(last_name) {
+            query+ = 'AND last_name LIKE ?';
+            bindings.push('%' + last_name '%');
+        }
+
+        const [customers] = await connection.execute({
+            'sql':query,
+            nestTables: true
+    }, bindings);
 
     app.listen(3000, () => {
         console.log('Server is running')
