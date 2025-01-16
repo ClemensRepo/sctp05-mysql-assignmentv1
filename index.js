@@ -29,19 +29,19 @@ async function main() {
 
     app.get('/customers', async (req, res) => {
         const [customers] = await connection.execute({
-            'sql': '
-            SELECT * from Customers
+            'sql': 
+            `SELECT * from Customers
                 JOIN Companies ON Customers.company_id = Companies.company_id;
-            ',
-            nestTables: true
-
+            `,
+            nestTables: true}
+        )
             res.render('customers/index', {
                 'customers': customers
             })
 
-        });
+        
 
-    })
+    });
 
     app.get('/customers/create', async(req,res)=>{
         let [companies] = await connection.execute('SELECT * from Companies');
@@ -124,28 +124,28 @@ async function main() {
     })
 
     app.get('/customers', async function(req,res) {
-        let query = 'SELECT * FROM Customers JOIN 
-        Companies ON Companies.company_id = Customers.company_id WHERE 1';
+        let query = `SELECT * FROM Customers JOIN 
+        Companies ON Companies.company_id = Customers.company_id WHERE 1`;
 
         const {first_name, last_name} = req.query;
 
         const bindings = [];
 
         if(first_name) {
-            query+ = 'AND first_name LIKE ?';
-            bindings.push('%' + first_name '%');
+            query += 'AND first_name LIKE ?';
+            bindings.push('%' + first_name + '%');
         }
 
         if(last_name) {
-            query+ = 'AND last_name LIKE ?';
-            bindings.push('%' + last_name '%');
+            query += 'AND last_name LIKE ?';
+            bindings.push('%' + last_name + '%');
         }
 
         const [customers] = await connection.execute({
             'sql':query,
             nestTables: true
-    }, bindings);
-
+        }, bindings);
+    })
     app.listen(3000, () => {
         console.log('Server is running')
     });
