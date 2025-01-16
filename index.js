@@ -35,7 +35,7 @@ async function main() {
             `,
             nestTables: true}
         )
-            res.render('customers/index', {
+            res.render('customers/customers', {
                 'customers': customers
             })
 
