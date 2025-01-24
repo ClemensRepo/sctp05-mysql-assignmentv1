@@ -27,6 +27,30 @@ async function main() {
         res.send('Hello, World!');
     });
 
+    app.get('/customers', async function(req,res) {
+        let query = `SELECT * FROM Customers JOIN 
+        Companies ON Companies.company_id = Customers.company_id WHERE 1`;
+
+        const {first_name, last_name} = req.query;
+
+        const bindings = [];
+
+        if(first_name) {
+            query += ' AND first_name LIKE ?';
+            bindings.push('%' + first_name + '%');
+        }
+
+        if(last_name) {
+            query += ' AND last_name LIKE ?';
+            bindings.push('%' + last_name + '%');
+        }
+
+        const [customers] = await connection.execute({
+            'sql':query,
+            nestTables: true
+        }, bindings);
+    })
+
     app.get('/customers', async (req, res) => {
         const [customers] = await connection.execute({
             'sql': 
@@ -38,15 +62,12 @@ async function main() {
             res.render('customers/customers', {
                 'customers': customers
             })
-
-        
-
     });
 
     app.get('/customers/create', async(req,res)=>{
         let [companies] = await connection.execute('SELECT * from Companies');
         let [employees] = await connection.execute('SELECT * from Employees');
-        res.render('customers/add', {
+        res.render('customers/create', {
             'companies': companies,
             'employees': employees
         })
@@ -123,29 +144,7 @@ async function main() {
         res.redirect('/customers');
     })
 
-    app.get('/customers', async function(req,res) {
-        let query = `SELECT * FROM Customers JOIN 
-        Companies ON Companies.company_id = Customers.company_id WHERE 1`;
-
-        const {first_name, last_name} = req.query;
-
-        const bindings = [];
-
-        if(first_name) {
-            query += 'AND first_name LIKE ?';
-            bindings.push('%' + first_name + '%');
-        }
-
-        if(last_name) {
-            query += 'AND last_name LIKE ?';
-            bindings.push('%' + last_name + '%');
-        }
-
-        const [customers] = await connection.execute({
-            'sql':query,
-            nestTables: true
-        }, bindings);
-    })
+    
     app.listen(3000, () => {
         console.log('Server is running')
     });

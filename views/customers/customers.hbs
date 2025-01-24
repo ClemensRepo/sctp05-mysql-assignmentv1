@@ -41,10 +41,10 @@
             <th>Last Name</th>
             <th>Rating</th>
             <th>Company</th>
-            <th></th>
+            <th></th>u
         </tr>
     </thead>
-    {{#each allCustomers}}
+    {{#each customers}}
     <tr>
         <td>
             {{this.Customers.first_name}}
@@ -59,9 +59,9 @@
             {{this.Companies.name}}
         </td>
         <td>
-            <a href="/customers/{{this.Customers.customer_id}}/update"
+            <a href="/customers/{{Customers.customer_id}}/update"
                 class="btn btn-primary btn-sm">Edit</a>
-            <a href="/customers/{{this.Customers.customer_id}}/delete"
+            <a href="/customers/{{Customers.customer_id}}/delete"
                 class="btn btn-danger btn-sm">Delete</a>
 
         </td>
